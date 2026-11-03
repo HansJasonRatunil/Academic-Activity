@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sari-Sari Store POS</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>Pam Sari-Sari Store</h1>
+    <span class="tag">Products in Shelf</span>
+  </div>
+  <div class="header-right">
+    <div class="cashier-badge" id="cashierBadge">
+      <span class="cb-avatar" id="cashierAvatar">?</span>
+      <span class="cb-info">
+        <span class="cb-label">Cashier</span>
+        <span class="cb-name" id="cashierName">Not logged in</span>
+      </span>
+      <button class="cb-switch" id="cashierSwitchBtn">Log in</button>
+    </div>
+  </div>
+</header>
+
+<nav class="view-tabs">
+  <button class="view-tab active" id="tabPos" data-view="pos">Product Catalog</button>
+  <button class="view-tab" id="tabRecords" data-view="records">
+    Transaction Records
+    <span class="tab-badge" id="tabRecordsCount">0</span>
+  </button>
+</nav>
+
+<div class="layout" id="posView">
+  <main class="catalog">
+    <div class="search catalog-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="searchInput" type="text" placeholder="Search by name…">
+    </div>
+    <div class="category-filters" id="categoryFilters"></div>
+    <div class="meta-row">
+      <span id="countLabel">0 products</span>
+      <span class="hint">Tap a product to add it to the order</span>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">No products match your search.</div>
+  </main>
+
+  <aside class="log-panel">
+
+    <!-- Current Order (cart) -->
+    <div class="cart-section">
+      <div class="log-head">
+        <span class="log-title">Current Order</span>
+        <span class="log-count" id="cartCount">0 items</span>
+      </div>
+      <div class="cart-list" id="cartList">
+        <div class="log-empty">Tap a product to add it here.</div>
+      </div>
+      <div class="log-foot">
+        <div class="log-total-row sub">
+          <span>Subtotal</span>
+          <span id="cartSubtotal">₱0.00</span>
+        </div>
+        <div class="log-total-row discount" id="cartDiscountRow" style="display:none;">
+          <span>Discount (5%)</span>
+          <span id="cartDiscount">−₱0.00</span>
+        </div>
+        <div class="log-total-row">
+          <span>Total</span>
+          <span id="cartTotal">₱0.00</span>
+        </div>
+        <button class="btn-checkout" id="checkoutBtn" disabled>Checkout</button>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- Transaction Records: its own full-width view, separate from the POS screen -->
+<div class="records-view" id="recordsView" style="display:none;">
+  <div class="records-inner">
+    <div class="records-header">
+      <div>
+        <h2>Transaction Records</h2>
+        <span class="log-count" id="txnCount">0 recorded</span>
+      </div>
+    </div>
+
+    <div class="stats-row wide">
+      <div class="stat-card">
+        <span class="stat-label">Total sales today</span>
+        <span class="stat-value" id="statTotalSales">₱0.00</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Most purchased</span>
+        <span class="stat-value stat-product" id="statTopProduct">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Customers today</span>
+        <span class="stat-value" id="statCustomersToday">0</span>
+      </div>
+    </div>
+
+    <div class="table-wrap" id="txnTableWrap">
+      <table class="txn-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Date</th><th>Product</th><th class="num">Qty</th>
+            <th class="num">Price</th><th class="num">Subtotal</th><th class="num">Disc.</th>
+            <th class="num">Paid</th><th class="num">Change</th><th>Customer</th><th>Cashier</th>
+          </tr>
+        </thead>
+        <tbody id="txnTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile-only sticky checkout bar: stays visible while scrolling the catalog -->
+<div class="mobile-cart-bar" id="mobileCartBar">
+  <div class="mcb-info">
+    <span class="mcb-count" id="mcbCount">0 items</span>
+    <span class="mcb-total" id="mcbTotal">₱0.00</span>
+  </div>
+  <button class="mcb-checkout" id="mcbCheckoutBtn">Checkout</button>
+</div>
+
+<!-- Cashier login modal -->
+<div class="modal-overlay" id="cashierOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <span>Cashier Login</span>
+      <button id="cashierClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="qty-row">
+        <span class="qty-label">Name of cashier on duty</span>
+      </div>
+      <input class="text-input" id="cashierNameInput" type="text" placeholder="e.g. Rosa Santos">
+      <button class="btn-add" id="cashierLoginConfirm">Start Shift</button>
+    </div>
+  </div>
+</div>
+
+<!-- Checkout modal -->
+<div class="modal-overlay" id="checkoutOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <span>Checkout</span>
+      <button id="checkoutClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="checkoutBody">
+      <div class="qty-row">
+        <span class="qty-label">Customer name (optional)</span>
+      </div>
+      <input class="text-input" id="customerNameInput" type="text" placeholder="Walk-in customer">
+
+      <div class="qty-row" style="margin-top:10px;">
+        <span class="qty-label">Customer type</span>
+      </div>
+      <div class="type-pills" id="typePills">
+        <button type="button" class="type-pill active" data-type="regular">Regular</button>
+        <button type="button" class="type-pill" data-type="senior">Senior</button>
+        <button type="button" class="type-pill" data-type="suki">Suki</button>
+      </div>
+
+      <div class="qty-row" style="margin-top:10px;">
+        <span class="qty-label">Subtotal</span>
+        <span class="qty-value" id="checkoutSubtotal">₱0.00</span>
+      </div>
+      <div class="qty-row discount-line" id="checkoutDiscountRow" style="display:none;">
+        <span class="qty-label" id="checkoutDiscountLabel">Discount</span>
+        <span class="qty-value discount-value" id="checkoutDiscount">−₱0.00</span>
+      </div>
+      <div class="qty-row subtotal">
+        <span class="qty-label">Total due</span>
+        <span class="qty-value" id="checkoutTotal">₱0.00</span>
+      </div>
+      <div class="qty-row">
+        <span class="qty-label">Amount paid</span>
+        <div class="pay-input-wrap">
+          <span class="peso-sign">₱</span>
+          <input id="payInput" type="number" min="0" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <div class="qty-row change-row">
+        <span class="qty-label">Change</span>
+        <span class="qty-value" id="changeDue">₱0.00</span>
+      </div>
+      <div class="pay-error" id="payError">Amount paid is less than the total due.</div>
+      <button class="btn-add" id="checkoutConfirm" disabled>Complete Transaction</button>
+    </div>
+    <div class="confirm-body" id="confirmBody" style="display:none;">
+      <div class="confirm-check">✓</div>
+      <div class="confirm-msg">Transaction completed</div>
+      <div class="confirm-change" id="confirmChangeText"></div>
+      <div class="confirm-actions">
+        <button class="btn-outline" id="viewReceiptBtn">View Receipt</button>
+        <button class="btn-add" id="confirmDone">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Receipt modal -->
+<div class="modal-overlay" id="receiptOverlay">
+  <div class="modal receipt-modal">
+    <div class="modal-head no-print">
+      <span>Receipt</span>
+      <button id="receiptClose" aria-label="Close">✕</button>
+    </div>
+    <div class="receipt-paper" id="receiptPaper"></div>
+    <div class="receipt-actions no-print">
+      <button class="btn-add" id="printReceiptBtn">Print Receipt</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<!-- Dedicated print target: plain, top-level, no fixed/overflow ancestors
+     so the browser can paginate it correctly. Populated just before printing. -->
+<div id="printArea"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

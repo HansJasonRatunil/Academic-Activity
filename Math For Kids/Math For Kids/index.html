@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math for Kids</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+<button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+<button class="music-toggle" id="music-toggle" aria-label="Toggle background music">&#127925;</button>
+<audio id="bg-music" src="Music/Aetheric - Sunshine (freetouse.com).mp3" loop preload="auto"></audio>
+<audio id="correct-sound" src="Music/freesound_community-yay-6120.mp3" preload="auto"></audio>
+<div class="overlay" id="overlay"></div>
+
+<div class="wrapper">
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-dot"></span>
+            <h1>Math Club</h1>
+        </div>
+
+        <h2>Pick an operator</h2>
+        <ul id="operator-list">
+            <li class="active" data-op="+"><span>&#43;</span><button>Addition</button></li>
+            <li data-op="-"><span>&#8722;</span><button>Subtraction</button></li>
+            <li data-op="&times;"><span>&#215;</span><button>Multiplication</button></li>
+            <li data-op="&divide;"><span>&#247;</span><button>Division</button></li>
+            <li data-op="random"><p>R</p><button>Randomize</button></li>
+        </ul>
+
+        <h2>Difficulty</h2>
+        <button data-level="easy" class="active">Easy</button>
+        <button data-level="medium">Medium</button>
+        <button data-level="hard">Hard</button>
+    </div>
+
+<div class="main">
+    <h1>Math for Kids</h1>
+
+    <div class="stats-bar">
+        <div class="stat stat-time">
+            <span class="stat-label">Time</span>
+            <span class="stat-value" id="timer">00:00</span>
+        </div>
+        <div class="stat stat-streak">
+            <span class="stat-label">Streak</span>
+            <span class="stat-value" id="streak">0</span>
+        </div>
+        <div class="stat stat-score">
+            <span class="stat-label">Score</span>
+            <span class="stat-value" id="score">0</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="game-row">
+            <svg class="mascot" id="mascot" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <ellipse class="mascot-shadow" cx="80" cy="146" rx="42" ry="8"></ellipse>
+                <g class="mascot-body">
+                    <path d="M80 20 C118 20 142 48 142 84 C142 118 114 140 80 140 C46 140 18 118 18 84 C18 48 42 20 80 20 Z" fill="#FFD23F" stroke="#26264D" stroke-width="5"/>
+                    <circle class="eye eye-left" cx="62" cy="80" r="8" fill="#26264D"/>
+                    <circle class="eye eye-right" cx="98" cy="80" r="8" fill="#26264D"/>
+                    <path class="mouth" d="M62 100 Q80 116 98 100" fill="none" stroke="#26264D" stroke-width="5" stroke-linecap="round"/>
+                    <circle cx="42" cy="92" r="8" fill="#FF6FA5" opacity="0.6"/>
+                    <circle cx="118" cy="92" r="8" fill="#FF6FA5" opacity="0.6"/>
+                </g>
+            </svg>
+
+            <div class="problem-card">
+                <div class="problem">
+                    <input type="text" id="num1" readonly values="_">
+                    <span class="operator" id="operator-symbol">+</span>
+                    <input type="text" id="num2" readonly values="_">
+                    <span class="equals">=</span>
+                    <input type="text" id="answer" placeholder="?" inputmode="numeric">
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="generate-btn" id="generate-btn">Generate</button>
+            <button class="check-btn" id="check-btn" title="Check answer">&#10003;</button>
+            <button class="hint-btn" id="hint-btn" title="Get a hint">?</button>
+        </div>
+
+        <div class="hint" id="hint"></div>
+        <div class="feedback" id="feedback"></div>
+    </div>
+</div>
+</div>
+</body>
+</html>
